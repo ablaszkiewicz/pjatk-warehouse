@@ -4,6 +4,7 @@ import { AgeGroup, Gender, UserBuilder } from "./user";
 import { Rental } from "./rental";
 import { Scooter } from "./scooter";
 import { CSVPrinter } from "./csv-printer";
+import { RentalFactory } from "./rental-decider";
 
 const januaryDistribution: MonthSettingsDistribution = {
     user: {
@@ -17,13 +18,27 @@ const januaryDistribution: MonthSettingsDistribution = {
             [Gender.WOMAN]: 20,
         },
     },
+    rental: {
+        duration: {
+            [AgeGroup.YOUNG]: {
+                short: 0.2,
+                medium: 0.3,
+                long: 0.5,
+            },
+            [AgeGroup.ADULT]: {
+                short: 0.4,
+                medium: 0.3,
+                long: 0.3,
+            },
+            [AgeGroup.OLD]: {
+                short: 0.5,
+                medium: 0.4,
+                long: 0.3,
+            },
+        },
+    },
     // below section doesnt work yet todo
     scooter: {
-        duration: {
-            short: 0.3,
-            medium: 0.4,
-            long: 0.3,
-        },
         model: {
             A: 1,
             B: 0,
@@ -41,11 +56,18 @@ const scooters = Array.from({ length: 100 }).map(() => new Scooter());
 const now = DateTime.now();
 const rentals: Rental[] = [];
 
+const rentalFactory = new RentalFactory();
 for (let i = 0; i < 30; i++) {
     const date = now.minus({ days: i });
+
     for (const user of users) {
-        if (Math.random() > 0.01) {
-            rentals.push(new Rental(user, date, scooters[0]));
+        const possibleRental = rentalFactory.createPossibleRental(
+            januaryDistribution,
+            user
+        );
+
+        if (possibleRental) {
+            rentals.push(possibleRental);
         }
     }
 }

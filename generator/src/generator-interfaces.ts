@@ -3,6 +3,7 @@ import { AgeGroup, Gender } from "./user";
 export interface MonthSettingsDistribution {
     user: UserDistribution;
     scooter: ScooterDistribution;
+    rental: RentalDistribution;
 }
 
 export interface UserDistribution {
@@ -12,7 +13,10 @@ export interface UserDistribution {
 
 export interface ScooterDistribution {
     model: ModelDistribution;
-    duration: DurationDistribution;
+}
+
+export interface RentalDistribution {
+    duration: AgeDurationDistributions;
 }
 
 export interface AgeDistribution {
@@ -26,6 +30,12 @@ export interface ModelDistribution {
     B: number;
     C: number;
     D: number;
+}
+
+export interface AgeDurationDistributions {
+    [AgeGroup.YOUNG]: DurationDistribution;
+    [AgeGroup.ADULT]: DurationDistribution;
+    [AgeGroup.OLD]: DurationDistribution;
 }
 
 export interface DurationDistribution {
